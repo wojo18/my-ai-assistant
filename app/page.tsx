@@ -1,3 +1,8 @@
 export default function Page() {
-  return <h1>Hello from My AI Assistant 🚀</h1>;
+  return (
+    <main style={{ fontFamily: "system-ui, sans-serif", padding: 24 }}>
+      <h1>My AI Assistant</h1>
+      <p>Deploy działa 🚀</p>
+    </main>
+  );
 }
