@@ -1,0 +1,8 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; padding: 24px; }
+.container { max-width: 880px; margin: 0 auto; display: grid; gap: 24px; }
+.card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; }
+input, textarea, button { font-size: 16px; padding: 10px; }
+button { cursor: pointer; }
+.list { display: grid; gap: 8px; }
+.row { display: flex; gap: 8px; align-items: center; }
