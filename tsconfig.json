@@ -5,8 +5,7 @@
     "module": "ESNext",
     "jsx": "preserve",
     "moduleResolution": "Bundler",
-    "strict": true,
-    "baseUrl": "."
+    "strict": true
   },
   "include": ["app/**/*", "next-env.d.ts"]
 }
