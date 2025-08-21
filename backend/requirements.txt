@@ -1,15 +1,20 @@
 fastapi==0.112.2
 uvicorn[standard]==0.30.6
+
+# Pydantic v2 (zgodne z FastAPI 0.112.x)
 pydantic==2.8.2
+
+# ORM (zgodne z Pydantic v2)
 sqlmodel==0.0.22
+
 python-dotenv==1.0.1
 httpx==0.27.0
+
+# Klient LLM (OpenAI)
 openai>=1.35.0,<2
+
+# Lepszy JSON (szybsze serializacje) – opcjonalnie
 orjson==3.10.7
+
+# Retry (np. na wywołania LLM/http) – opcjonalnie
 tenacity==8.5.0
-
-# Postgres driver (prosty, binarny – wystarczy na Railway/Render)
-psycopg[binary]==3.2.1
-
-# Migracje DB
-alembic==1.13.2
