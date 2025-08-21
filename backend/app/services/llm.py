@@ -1,30 +1,27 @@
+# backend/app/services/llm.py
 import os
-from dotenv import load_dotenv
+import httpx
 
-load_dotenv()
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+LLM_MODEL = os.getenv("LLM_MODEL", "gpt-4o-mini")
 
-# OpenAI SDK v1+
-try:
-    from openai import OpenAI
-except Exception:  # pragma: no cover
-    OpenAI = None
+class LLMClient:
+    def __init__(self, api_key: str | None = OPENAI_API_KEY):
+        self.api_key = api_key
 
-MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
-
-
-def ask_llm(prompt: str) -> str:
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key or OpenAI is None:
-        # Tryb fallback – bezpośrednia odpowiedź, aby nie wykrzaczyć się lokalnie
-        return "[LLM disabled] Echo: " + prompt[:200]
-
-    client = OpenAI(api_key=api_key)
-    resp = client.chat.completions.create(
-        model=MODEL_NAME,
-        messages=[
-            {"role": "system", "content": "You are a helpful private AI assistant."},
-            {"role": "user", "content": prompt},
-        ],
-        temperature=0.3,
-    )
-    return resp.choices[0].message.content.strip()
+    async def complete(self, prompt: str) -> str:
+        if not self.api_key:
+            return "LLM not configured."
+        # minimalny call do OpenAI Chat Completions (JSON mode)
+        url = "https://api.openai.com/v1/chat/completions"
+        headers = {"Authorization": f"Bearer {self.api_key}"}
+        payload = {
+            "model": LLM_MODEL,
+            "messages": [{"role": "user", "content": prompt}],
+            "temperature": 0.5,
+        }
+        async with httpx.AsyncClient(timeout=60) as client:
+            r = await client.post(url, headers=headers, json=payload)
+            r.raise_for_status()
+            data = r.json()
+            return data["choices"][0]["message"]["content"]
