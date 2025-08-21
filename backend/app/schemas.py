@@ -1,31 +1,16 @@
-from typing import Optional
-from datetime import datetime
+# backend/app/schemas.py (fragment)
 from pydantic import BaseModel
-
-
-class AskRequest(BaseModel):
-    prompt: str
-
-
-class AskResponse(BaseModel):
-    answer: str
-
+from datetime import datetime
 
 class ReminderCreate(BaseModel):
     text: str
-    due_at: Optional[datetime] = None
+    due_at: datetime | None = None
 
-
-class ReminderRead(BaseModel):
+class ReminderOut(BaseModel):
     id: int
     text: str
-    due_at: Optional[datetime]
+    due_at: datetime | None
     done: bool
     created_at: datetime
-    updated_at: datetime
-
-
-class ReminderUpdate(BaseModel):
-    text: Optional[str] = None
-    due_at: Optional[datetime] = None
-    done: Optional[bool] = None
+    class Config:
+        from_attributes = True
