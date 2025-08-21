@@ -1,12 +1,14 @@
-from typing import Optional
+# backend/app/models.py (fragment)
+from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy import Column, Integer, String, DateTime, Boolean
 from datetime import datetime
-from sqlmodel import SQLModel, Field
 
+Base = declarative_base()
 
-class Reminder(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    text: str
-    due_at: Optional[datetime] = None
-    done: bool = False
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+class Reminder(Base):
+    __tablename__ = "reminders"
+    id = Column(Integer, primary_key=True)
+    text = Column(String, nullable=False)
+    due_at = Column(DateTime, nullable=True)
+    done = Column(Boolean, default=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
