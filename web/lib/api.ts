@@ -23,10 +23,15 @@ export async function apiFetch(path: string, init: RequestInit = {}) {
   }
 }
 
-export async function ask(q: string): Promise<string> {
-  const res = await apiFetch('/ask', {
-    method: 'POST',
-    body: JSON.stringify({ q }),
-  });
-  return res.text();
+export async function remindersList() {
+  const res = await apiFetch('/reminders', { method: 'GET' });
+  return res.json() as Promise<Array<{id:number;text:string;due_at:string|null;done:boolean;created_at:string}>>;
 }
+export async function remindersCreate(text: string, due_at?: string) {
+  const res = await apiFetch('/reminders', {
+    method: 'POST',
+    body: JSON.stringify({ text, due_at: due_at ?? null }),
+  });
+  return res.json();
+}
+
