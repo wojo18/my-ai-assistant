@@ -1,43 +1,46 @@
 'use client';
 import { useState } from 'react';
-import { apiAsk } from '../lib/api';
+import { ask } from '@/lib/api';
 
 export default function Chat() {
-  const [input, setInput] = useState('');
-  const [history, setHistory] = useState<{role:'user'|'assistant';content:string}[]>([]);
+  const [q, setQ] = useState('');
+  const [a, setA] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function onSend() {
-    if (!input.trim()) return;
-    const prompt = input.trim();
-    setInput('');
-    setHistory(h => [...h, { role: 'user', content: prompt }]);
+  async function onSend(e: React.FormEvent) {
+    e.preventDefault();
+    if (!q.trim()) return;
     setLoading(true);
+    setA(null);
     try {
-      const answer = await apiAsk(prompt);
-      setHistory(h => [...h, { role: 'assistant', content: answer }]);
-    } catch (e:any) {
-      setHistory(h => [...h, { role: 'assistant', content: 'Błąd: ' + (e?.message || 'nieznany') }]);
+      const answer = await ask(q);
+      setA(answer);
+    } catch (err: any) {
+      setA(`Błąd: ${err.message}`);
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="card">
-      <h2>Chat</h2>
-      <div className="list" style={{minHeight:120}}>
-        {history.map((m, i) => (
-          <div key={i} className="row">
-            <b>{m.role === 'user' ? 'Ty:' : 'AI:'}</b>
-            <div>{m.content}</div>
-          </div>
-        ))}
-      </div>
-      <div className="row">
-        <textarea value={input} onChange={e=>setInput(e.target.value)} placeholder="Napisz wiadomość..." rows={3} style={{flex:1}} />
-        <button onClick={onSend} disabled={loading}>{loading ? '...' : 'Wyślij'}</button>
-      </div>
+    <div className="mt-8 space-y-4">
+      <form onSubmit={onSend} className="flex gap-2">
+        <input
+          className="flex-1 border rounded px-3 py-2"
+          placeholder="Zadaj pytanie..."
+          value={q}
+          onChange={e => setQ(e.target.value)}
+        />
+        <button
+          className="px-4 py-2 rounded bg-blue-600 text-white disabled:opacity-50"
+          disabled={loading}
+        >
+          {loading ? '...' : 'Wyślij'}
+        </button>
+      </form>
+      {a && (
+        <div className="border rounded p-3 whitespace-pre-wrap">{a}</div>
+      )}
     </div>
   );
 }
